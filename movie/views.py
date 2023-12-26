@@ -1,8 +1,10 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import DirectorSerializer, MovieSerializer, ReviewSerializer
+from .serializers import DirectorSerializer, MovieSerializer, ReviewSerializer, MovieReviewSerializer
 from .models import Director, Movie, Review
+from django.db.models import Avg
+
 
 
 @api_view(['GET'])
@@ -56,4 +58,10 @@ def review_detail_api_view(request, id):
         return Response(data={'detail': 'review not found'},
                         status=status.HTTP_404_NOT_FOUND)
     serializer = ReviewSerializer(reviews, many=False)
+    return Response(data=serializer.data)
+
+@api_view(['GET'])
+def movie_review_list_api_view(request):
+    queryset = Movie.objects.all()
+    serializer = MovieReviewSerializer(queryset, many=True)
     return Response(data=serializer.data)
